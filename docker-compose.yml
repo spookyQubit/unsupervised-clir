@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  app:
+    image: shan/python-echo:1.0
+    stdin_open: true
+    tty: true
+    entrypoint: /bin/sh
+    volumes:
+      - /home/sneha/learn-docker/data:/usr/src/app/data
