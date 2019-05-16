@@ -1,4 +1,4 @@
-## Resources:
+## Resources
 ```
     * Unsupervised Cross-Lingual Information Retrieval using Monolingual Data Only
     * Cross-lingual Learning-to-Rank with Shared Representations
