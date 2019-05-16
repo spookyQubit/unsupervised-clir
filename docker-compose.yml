@@ -7,4 +7,5 @@ services:
     tty: true
     entrypoint: /bin/sh
     volumes:
-      - /home/sneha/learn-docker/data:/usr/src/app/data
+      - /home/sneha/PycharmProjects/unsupervised-clir/Embeddings:/usr/src/app/Embeddings
+      - /home/sneha/PycharmProjects/unsupervised-clir/Data:/usr/src/app/Data
