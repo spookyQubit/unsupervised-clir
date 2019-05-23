@@ -1,11 +1,15 @@
 #!/bin/bash
 
-# DOwnloads file zipped file from a websource=url and unzips it is destination=directory 
+# Does the following things:
+# 1) Downloads zipped file from a websource=url 
+# 2) Unzips it in destination=directory 
+# 3) Removes the zipped file 
 
-# usage 
-# ./download_unzip.sh  -s "madata.bib.uni-mannheim.de/273/1/UnsupCLIREmbeddings.tar.gz"
+# Usage 
+# ./download_unzip.sh  -s "https://madata.bib.uni-mannheim.de/273/UnsupCLIREmbeddings.tar.gz"
 # ./download_unzip.sh  -s "www.cs.jhu.edu/~kevinduh/a/wikiclir2018/sasaki18.tgz" -d Data
  
+# Default destination where the file will be unzipped is the current (.) directory.
 DESTINATION=.
 
 POSITIONAL=()

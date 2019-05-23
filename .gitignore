@@ -1,2 +1,7 @@
+# Project specific Data files
 Data
 Embeddings
+
+# swp, swo files
+*.swp
+*.swo

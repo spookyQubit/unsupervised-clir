@@ -1,6 +1,6 @@
 import sys
 
-fname = "../data/test.txt"
+fname = "../Data/wikiclir2018/README.txt"
 
 
 def add(a, b):
@@ -12,7 +12,9 @@ with open(fname) as f:
 
 
 def main():
-    pass
+    with open(fname) as f:
+        contents = f.readlines()
+        print(contents)
 
 
 
