@@ -5,3 +5,6 @@ Embeddings
 # swp, swo files
 *.swp
 *.swo
+
+# __pycache__
+__pycache__
