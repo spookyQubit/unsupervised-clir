@@ -1,11 +1,8 @@
 import unittest
 import sys
-import numpy as np
 
 sys.path.insert(0, '../')
 from src import data
-
-
 
 
 class TestEmbedding(unittest.TestCase):

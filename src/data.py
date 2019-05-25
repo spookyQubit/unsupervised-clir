@@ -8,6 +8,13 @@ class RelevanceQueryDoc:
 
 
 def get_data(file_path, max_queries=None, delimiter='\t'):
+    '''
+    param file_path: path to the data file. The format for the content of the file is:
+                     relevance\delimiter\query\delimiter\document.
+    param max_queries: Max number of examples to be gotten. Helpful while debugging.
+    param delimiter: the delimiter which is used to separate out the relevance/query/doc on each line of the file. 
+    returns: yields object RelevanceQueryDoc
+    '''
 
     with open(file_path, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
         for idx, line in enumerate(f):

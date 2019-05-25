@@ -4,7 +4,7 @@ def load_embeddings(file_path, delimiter = ' '):
     
     '''
     param file_path: path to the embedding file. The format for the content of the file is:
-                     word\delimiter\delimiter\f_1\delimiter\f_2\delimiter\f_dim 
+                     word\delimiter\f_1\delimiter\f_2\delimiter\f_dim 
                      where dim is the dimension of the embedding vector.
     param delimiter: the delimiter which is used to separate out the word/vec_values on each line of the file. 
     returns        : dim: dimension of the word vectors
