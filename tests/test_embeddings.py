@@ -13,8 +13,8 @@ class TestEmbedding(unittest.TestCase):
         self.en_embeddings_file = "../Embeddings/Conneau/wiki.multi.en.vec"
         self.fr_embeddings_file = "../Embeddings/Conneau/wiki.multi.fr.vec"
 
-        self.english_emb = embeddings.Embeddings(self.en_embeddings_file)
-        self.french_emb = embeddings.Embeddings(self.fr_embeddings_file)
+        self.english_emb = embeddings.Embeddings(self.en_embeddings_file, "english")
+        self.french_emb = embeddings.Embeddings(self.fr_embeddings_file, "french")
 
     def tearDown(self):
         pass

@@ -1,4 +1,6 @@
-
+import string
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
 
 class RelevanceQueryDoc:
     def __init__(self, relevance, query, doc):
@@ -7,13 +9,64 @@ class RelevanceQueryDoc:
         self.doc = doc
 
 
+class TextProcessor:
+    def __init__(self, lang):
+        self.lang = lang
+        self.stopwords = set(stopwords.words(self.lang))
+
+        self.punctuation_translate_table = str.maketrans({key: None for key in string.punctuation})
+    
+    def clean(self, in_str):
+        '''
+        param in_str: input string.
+        returns: A string with the following transformations: 
+                 1) converts to lower
+                 2) Removes '\r'
+                 3) Removes '\n'
+                 4) Removes '\t'
+                 5) Removes punctuations
+                 6) Remove leading and trailing white spaces
+        '''
+        # Convert the string to lower case
+        clean_str = in_str.lower()
+
+        # Remove \r char
+        clean_str = clean_str.replace('\r', ' ')
+    
+        # Remove \n char
+        clean_str = clean_str.replace('\n', ' ')
+
+        # Remove \t char
+        clean_str = clean_str.replace('\t', ' ')
+        
+        # Remove punctuations
+        clean_str = clean_str.translate(self.punctuation_translate_table)
+
+        # Remove leading and trailing white spaces
+        clean_str = clean_str.strip() 
+
+        return clean_str
+
+    def tokenize(self, text):
+        
+        tokens = []
+        for token in word_tokenize(text, language=self.lang):
+            if token not in self.stopwords:
+                tokens.append(token)
+        return tokens
+
+    def clean_and_tokenize(self, in_str):
+        clean_str = self.clean(in_str)
+        return self.tokenize(clean_str)
+
+
 def get_data(file_path, max_queries=None, delimiter='\t'):
     '''
     param file_path: path to the data file. The format for the content of the file is:
                      relevance\delimiter\query\delimiter\document.
     param max_queries: Max number of examples to be gotten. Helpful while debugging.
     param delimiter: the delimiter which is used to separate out the relevance/query/doc on each line of the file. 
-    returns: yields object RelevanceQueryDoc
+    returns: yields one instance of RelevanceQueryDoc
     '''
 
     with open(file_path, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:

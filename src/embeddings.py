@@ -79,8 +79,9 @@ def get_knn(src_word, src_emb, src_id2word, trg_emb, trg_id2word, K=5):
 
 class Embeddings:
 
-    def __init__(self, file_path, delimiter = ' '):
+    def __init__(self, file_path, lang, delimiter = ' '):
        self.file_path = file_path
+       self.language = lang
        self.delimiter = delimiter
 
        self.dim, self.word2id, self.id2word, self.embeddings = load_embeddings(file_path, delimiter)
