@@ -1,6 +1,9 @@
 import sys
 
 
+def process_and_store_data():
+    pass
+
 def main():
     # load word embeddings
     # load documents query in chunks
@@ -8,6 +11,8 @@ def main():
     # process query and texts
     # run experiment 
 
+
+    process_and_store_data()
 
 
 if __name__=="__main__":

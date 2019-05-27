@@ -1,5 +1,6 @@
 import unittest
 import sys
+from collections import Counter
 
 sys.path.insert(0, '../')
 from src import data
@@ -57,5 +58,34 @@ class TestData(unittest.TestCase):
         in_str = "word1          word2"
         self.assertEqual(self.english_processor.tokenize(in_str), ["word1", "word2"])
 
+    def test_invalid_lang_for_class_TextProcessor(self):
+
+        with self.assertRaises(ValueError) as context:
+
+            some_bad_lang = "engxyz"
+            invalid_processor = data.TextProcessor(some_bad_lang)
+
+        self.assertTrue('Do not support for language={} to get stopwords'.format(some_bad_lang) in str(context.exception))
+
+
 if __name__=="__main__":
+
+    c = Counter()
+    c['word1'] += 1
+    c['word2'] += 1
+
+    print("c={}".format(c))
+
+    c2 = Counter()
+    c2['word2'] += 1
+    c2['word3'] += 1
+
+    c.update(c2)
+    print("c={}".format(c))
+
+    # counter(list)
+    # counter[word] += 1
+
+
+
     unittest.main()

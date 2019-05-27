@@ -10,9 +10,13 @@ class RelevanceQueryDoc:
 
 
 class TextProcessor:
+    
     def __init__(self, lang):
         self.lang = lang
-        self.stopwords = set(stopwords.words(self.lang))
+        try:
+            self.stopwords = set(stopwords.words(self.lang))
+        except:
+            raise ValueError("Do not support for language={} to get stopwords".format(self.lang)) 
 
         self.punctuation_translate_table = str.maketrans({key: None for key in string.punctuation})
     
@@ -60,19 +64,19 @@ class TextProcessor:
         return self.tokenize(clean_str)
 
 
-def get_data(file_path, max_queries=None, delimiter='\t'):
+def get_data(file_path, max_samples=None, delimiter='\t'):
     '''
     param file_path: path to the data file. The format for the content of the file is:
                      relevance\delimiter\query\delimiter\document.
-    param max_queries: Max number of examples to be gotten. Helpful while debugging.
+    param max_samples: Max number of examples to be gotten. Helpful while debugging.
     param delimiter: the delimiter which is used to separate out the relevance/query/doc on each line of the file. 
-    returns: yields one instance of RelevanceQueryDoc
+    returns: yield one instance of RelevanceQueryDoc
     '''
 
     with open(file_path, 'r', encoding='utf-8', newline='\n', errors='ignore') as f:
         for idx, line in enumerate(f):
             
-            if max_queries is not None:
+            if max_samples is not None:
                 if idx >= max_queries:
                     break
 
