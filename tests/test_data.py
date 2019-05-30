@@ -131,7 +131,51 @@ class TestGetData(unittest.TestCase):
                 self.assertEqual(loaded_data.doc, "this is a doc 2\n")
                 self.assertEqual(loaded_data.doc_idx, 2)
 
+    '''
+    def test_process_and_store_data(self):
+
+        # Need to create constants file so that g_working_dir is exposed
+        in_file_temp = "temp_in_file.txt"
+        out_individual_file_temp = "temp_out_individual_file.txt"
+        out_all_file_temp ="temp_out_all_file.txt"
+
+        with open(in_file_temp, 'w') as f:
+            f.write("1\tthis is a query 1\tdocw1 docw2 1\n")
+            f.write("0\tthis is a query 0\tdocw1 docw2 0\n")
+            
+        data.process_and_store_data(input_file=in_file_temp, 
+                                    output_individual_file=out_individual_file_temp, 
+                                    output_all_file=out_all_file_temp,
+                                    query_lang="english", 
+                                    doc_lang="english", 
+                                    generate_output_file_from_scratch=True,
+                                    max_samples=None)
+
+        all_counter = None
+        with open(out_all_file_temp, 'rb') as out_all_f:
+            all_counter = pickle.load(out_all_f)
+
+        self.assertEqual(all_counter['docw1'], 2)
+        self.assertEqual(all_counter['docw2'], 2)
+        self.assertEqual(all_counter['1'], 1)
+        self.assertEqual(all_counter['0'], 1)
+
+        # only the counts of the doc words are stored in "all" file
+        self.assertEqual(all_counter, Counter({'docw1': 2, 'docw2': 2, '1': 1, '0': 1}))
+
+        # Clean up 
+        os.remove(in_file_temp) 
+        os.remove(out_individual_file_temp) 
+        os.remove(out_all_file_temp) 
+    '''
 
 
 if __name__=="__main__":
+
+    c = Counter({'a': 1, 'b': 2})
+    print(c)
+    print(c['blah'])
+    print(c)
+    print(c['a']/sum(c.values()))
+
     unittest.main()

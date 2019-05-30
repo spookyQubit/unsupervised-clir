@@ -55,33 +55,59 @@ def load_embeddings(file_path, delimiter = ' '):
         return dim, word2id, id2word, np.vstack(vectors)
 
 
-def get_knn(src_word, src_emb, src_id2word, trg_emb, trg_id2word, K=5):
-    '''
-    param src_word: A word (string) in the source language.   
-    param src_emb: Source word embeddings (numpy matrix of shape (vocab_size, emb_dimension))
-    param src_id2word: Dict {id: word in source language} 
-    param trg_emb: Target word embeddings (numpy matrix of shape (vocab_size, emb_dimension))
-    param trg_id2word: Dict {id: word in target language}
-    param K: Number of nearest neighbours  
-    returns: knn_trg_ids: Ids of words (list) in target language which are nearest to src_word
-             knn_scores_of_trg_ids: Scores (list) measuring nearness between src_word embedding and knn target words 
-     
-
-    '''
-    src_word2id = {v:k for k, v in src_id2word.items()}
-    src_word_emb = src_emb[src_word2id[src_word]]
-    scores = ( trg_emb / np.linalg.norm(trg_emb, 2, 1)[:, None] ).dot(src_word_emb/np.linalg.norm(src_word_emb))
-    knn_trg_ids = scores.argsort()[-K:][::-1]
-    knn_scores_of_trg_ids = [scores[idx] for idx in knn_trg_ids]
-
-    return knn_trg_ids, knn_scores_of_trg_ids 
-
-
 class Embeddings:
 
     def __init__(self, file_path, lang, delimiter = ' '):
        self.file_path = file_path
-       self.language = lang
+       self.language = lang 
        self.delimiter = delimiter
 
        self.dim, self.word2id, self.id2word, self.embeddings = load_embeddings(file_path, delimiter)
+
+
+
+class WordTranslator:
+    def __init__(self, src_embeddings, trg_embeddings, number_of_translations_per_words):
+        self.src_embeddings = src_embeddings 
+        self.trg_embeddings = trg_embeddings
+        self.number_of_translations_per_words = number_of_translations_per_words  # K in knn
+        self.translations = {}
+
+
+    def get_knn(self, src_word):
+        '''
+        param src_word: A word (string) in the source language.   
+        param K: Number of nearest neighbours  
+        returns: knn_trg_ids: Ids of words (list) in target language which are nearest to src_word
+                 knn_scores_of_trg_ids: Scores (list) measuring nearness between src_word embedding and knn target words 
+        '''
+
+        K = self.number_of_translations_per_words
+
+        src_word_emb = self.src_embeddings.embeddings[self.src_embeddings.word2id[src_word]]
+        scores = ( self.trg_embeddings.embeddings / np.linalg.norm(self.trg_embeddings.embeddings, 2, 1)[:, None] ).dot(src_word_emb/np.linalg.norm(src_word_emb))
+        knn_trg_ids = scores.argsort()[-K:][::-1]
+        knn_scores_of_trg_ids = [scores[idx] for idx in knn_trg_ids]
+        return knn_trg_ids, knn_scores_of_trg_ids 
+
+
+    def translate(self, src_word):
+
+        if src_word in self.translations:
+            return
+
+        if src_word in self.src_embeddings.word2id:
+            knn_trg_ids, scores = self.get_knn(src_word)
+            knn_target_words = [self.trg_embeddings.id2word[idx] for idx in knn_trg_ids]
+            
+            self.translations[src_word] = [(w, s) for w, s in zip(knn_target_words, scores)] 
+        else:
+            self.translations[src_word] = self.number_of_translations_per_words * [(src_word, 1.0)]
+
+
+    def get_translations(self, src_word):
+
+        self.translate(src_word)
+        return self.translations[src_word] 
+
+

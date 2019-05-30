@@ -1,5 +1,6 @@
 import unittest
 import sys
+import pickle
 
 sys.path.insert(0, '../')
 from src import main

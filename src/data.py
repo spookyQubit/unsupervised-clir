@@ -1,3 +1,8 @@
+import os
+from os import path
+
+import pickle
+from collections import Counter
 import string
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -102,3 +107,76 @@ def get_data(file_path, max_samples=None, delimiter='\t'):
                 
             yield RelevanceQueryDoc(relevance, query, doc, idx)
 
+
+def load_all_pickled_data(filename):
+    with open(filename, "rb") as f:
+        while True:
+            try:
+                yield pickle.load(f)
+            except EOFError:
+                break
+
+
+def process_and_store_data(input_file, output_individual_file, output_all_file,
+                           query_lang, doc_lang, 
+                           generate_output_file_from_scratch=True,
+                           max_samples=None):
+
+    '''
+    param input_file: file from where to read raw data.
+    param output_individual_file: file to store processed data for per docment
+    param output_all_file: file to store processed data for all doucuments
+    param query_lang: language of the query 
+    param doc_lang: language of the document
+    param generate_output_file_from_scratch: Boolean indicating whether to generate/process 
+                                             all data or not 
+    param max_samples: Number of samples to process. If None, all data is processed. 
+    '''
+
+    if not path.exists(input_file):
+        raise Exception("{} does not exist".format(input_file))
+
+    '''
+    Check if the output_file already exists. 
+    If it already exists, check how many entries are there.
+    If the number of entries are the same as the number of entries in input_file, 
+    do not do anything.
+    '''
+
+    queryProcessor = TextProcessor(query_lang) 
+    docProcessor = TextProcessor(doc_lang) 
+
+    all_docs_counter = Counter()
+    individual_doc_counter = Counter()
+    individual_query_counter = Counter()
+    
+    if generate_output_file_from_scratch: 
+        if path.exists(output_individual_file):
+            os.remove(output_individual_file)
+    
+        if path.exists(output_all_file):
+            os.remove(output_all_file)
+    
+    with open(output_individual_file, "wb") as out_individual_file:
+        for loaded_data in get_data(input_file, max_samples):
+            processed_query = queryProcessor.clean_and_tokenize(loaded_data.query)
+            processed_doc = docProcessor.clean_and_tokenize(loaded_data.doc)
+
+            # Clear and update individual_doc_counter
+            individual_doc_counter.clear()
+            individual_doc_counter.update(processed_doc) 
+
+            # Update all_doc_counter
+            all_docs_counter.update(individual_doc_counter)
+        
+            # Clear and update individual_query_counter
+            individual_query_counter.clear()
+            individual_query_counter.update(processed_query)
+
+            pickle.dump(RelevanceQueryDoc(loaded_data.relevance, 
+                                          individual_query_counter, 
+                                          individual_doc_counter, 
+                                          loaded_data.doc_idx), out_individual_file)
+
+    with open(output_all_file, "wb") as out_all_file:
+        pickle.dump(all_docs_counter, out_all_file)
